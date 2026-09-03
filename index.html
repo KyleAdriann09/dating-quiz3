@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Find your break point</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#0F1A19;
+  --ground-lift:#162523;
+  --card:#FBFAF7;
+  --ink:#111917;
+  --ink-soft:#5A6664;
+  --accent:#D9992B;
+  --accent-wash:#FDF5E7;
+  --accent-deep:#8A5D0F;
+  --hair:#E4E1D9;
+  --hair-strong:#C9C5BA;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--ground);
+  font-family:"Inter Tight",system-ui,-apple-system,sans-serif;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  justify-content:center;
+  padding:24px 16px 40px;
+}
+.shell{width:100%;max-width:440px}
+
+.brand{
+  text-align:center;
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.06em;
+  color:#EDE9E0;
+  margin-bottom:16px;
+}
+.track{height:4px;background:var(--ground-lift);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.fill{height:100%;width:8%;background:var(--accent);border-radius:99px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+
+.bar{display:flex;align-items:center;height:28px;margin-bottom:8px}
+.back{
+  background:none;border:0;cursor:pointer;padding:4px 8px 4px 0;
+  color:#8C9995;font-size:20px;line-height:1;font-family:inherit;
+}
+.back:hover{color:#EDE9E0}
+.back[hidden]{visibility:hidden;display:block}
+
+.card{
+  background:var(--card);
+  border-radius:20px;
+  padding:30px 24px 26px;
+  min-height:400px;
+  display:flex;
+  flex-direction:column;
+}
+.q{font-size:23px;font-weight:600;line-height:1.28;letter-spacing:-.01em;margin-bottom:8px}
+.helper{font-size:14px;color:var(--ink-soft);line-height:1.5;margin-bottom:18px}
+.q + .opts{margin-top:14px}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  width:100%;text-align:left;cursor:pointer;font-family:inherit;
+  padding:15px 16px;border:1px solid var(--hair);background:#fff;
+  border-radius:13px;font-size:15px;line-height:1.35;color:var(--ink);
+  transition:border-color .15s,background .15s;
+}
+.opt:hover{border-color:var(--hair-strong)}
+.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.opt .dot{
+  flex:none;width:19px;height:19px;border-radius:50%;
+  border:1.5px solid var(--hair-strong);transition:border-color .15s,border-width .15s;
+}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-wash);color:var(--accent-deep)}
+.opt[aria-pressed="true"] .dot{border:6px solid var(--accent)}
+
+.lede{font-size:23px;font-weight:600;line-height:1.28;letter-spacing:-.01em;margin-bottom:12px}
+.body{font-size:15px;line-height:1.6;color:var(--ink-soft)}
+.body + .body{margin-top:12px}
+.quote{
+  margin-top:20px;padding-left:14px;border-left:2px solid var(--accent);
+  font-size:15px;line-height:1.55;color:var(--ink);
+}
+.cite{margin-top:8px;font-size:13px;color:var(--ink-soft)}
+
+.field{margin-top:16px}
+.field label{display:block;font-size:13px;font-weight:500;color:var(--ink-soft);margin-bottom:6px}
+.field input{
+  width:100%;font-family:inherit;font-size:16px;color:var(--ink);
+  padding:13px 14px;border:1px solid var(--hair);border-radius:11px;background:#fff;
+}
+.field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-wash)}
+.err{margin-top:8px;font-size:13px;color:#B4322A}
+.err[hidden]{display:none}
+
+.cta{
+  margin-top:auto;width:100%;font-family:inherit;font-size:16px;font-weight:600;
+  padding:16px;border:0;border-radius:13px;background:var(--accent);color:#231603;
+  cursor:pointer;transition:filter .15s;
+}
+.cta:hover{filter:brightness(1.06)}
+.cta:active{transform:scale(.99)}
+.spacer{margin-top:auto}
+.fineprint{margin-top:14px;font-size:12px;line-height:1.5;color:var(--ink-soft);text-align:center}
+.trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<main class="shell">
+  <div class="brand">yourbrand</div>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <div class="bar"><button class="back" id="back" aria-label="Go back" hidden>&#8249;</button></div>
+  <section class="card" id="card" aria-live="polite"></section>
+</main>
+
+<script>
+// ---------------------------------------------------------------------------
+// Config. Everything the quiz says lives here.
+// ---------------------------------------------------------------------------
+
+var CHECKOUT_URL = "/checkout";
+var LEAD_ENDPOINT = "";   // paste your Airtable / Sheets / CRM webhook URL
+
+var SCREENS = [
+  {
+    id: "situation", block: "start", type: "question",
+    q: "Where are you at with dating right now?",
+    opts: [
+      { id: "out",        label: "Completely out of the game \u2014 it's been a while" },
+      { id: "apps",       label: "On the apps, going nowhere" },
+      { id: "dates",      label: "Getting dates, they don't go anywhere" },
+      { id: "plenty",     label: "Dating plenty, nothing that lasts" }
+    ]
+  },
+  {
+    id: "frequency", block: "start", type: "question",
+    q: "How often do you actually get to a first date?",
+    opts: [
+      { id: "never",      label: "Almost never \u2014 I'm not really trying" },
+      { id: "rare",       label: "Once every few months, if I'm lucky" },
+      { id: "regular",    label: "Regularly \u2014 they just go nowhere" },
+      { id: "constant",   label: "Constantly \u2014 and I'm exhausted by it" }
+    ]
+  },
+  {
+    id: "breakpoint", block: "diagnosis", type: "question",
+    q: "Where does it usually fall apart?",
+    helper: "Pick the one that happens most often.",
+    opts: [
+      { id: "approach",   label: "Before it starts \u2014 I don't approach or match" },
+      { id: "messages",   label: "In the messages \u2014 it dies before we meet" },
+      { id: "first_date", label: "On the first date \u2014 no second one" },
+      { id: "fade",       label: "A few weeks in \u2014 it just cools off" }
+    ]
+  },
+  {
+    id: "feeling", block: "diagnosis", type: "question",
+    q: "Be honest: how does the whole thing make you feel?",
+    opts: [
+      { id: "frustrated", label: "Frustrated \u2014 I don't understand what I'm doing wrong" },
+      { id: "anxious",    label: "Anxious \u2014 I overthink every message" },
+      { id: "numb",       label: "Numb \u2014 I've stopped expecting much" },
+      { id: "angry",      label: "Angry \u2014 I'm putting in more than I get back" }
+    ]
+  },
+  {
+    id: "interstitial", block: "diagnosis", type: "interstitial",
+    lede: "Almost everyone lands on one of four break points.",
+    body: [
+      "Each one has a specific fix. The trouble is that most guys try to fix all four at once, which is why nothing moves.",
+      "Six more questions and you'll know which one is yours."
+    ],
+    quote: "Replace this with a real testimonial. Two sentences, specific, from someone whose break point matches the most common answer above.",
+    cite: "\u2014 Name, city",
+    cta: "Keep going"
+  },
+  {
+    id: "duration", block: "history", type: "question",
+    q: "How long has it been like this?",
+    opts: [
+      { id: "under_year",  label: "Under a year" },
+      { id: "couple",      label: "A couple of years" },
+      { id: "five_plus",   label: "Five years or more" },
+      { id: "counting",    label: "Long enough that I've stopped counting" }
+    ]
+  },
+  {
+    id: "tried", block: "history", type: "question",
+    q: "What have you already tried?",
+    opts: [
+      { id: "nothing",     label: "Nothing structured \u2014 just winging it" },
+      { id: "free",        label: "Free stuff \u2014 videos, Reddit, podcasts" },
+      { id: "paid",        label: "Paid for something that didn't work" },
+      { id: "looks",       label: "Changed how I look, still stuck" }
+    ]
+  },
+  {
+    id: "awareness", block: "history", type: "question",
+    q: "Do you know what's actually holding you back?",
+    opts: [
+      { id: "no_idea",     label: "No idea, and that's the worst part" },
+      { id: "theory",      label: "I have a theory I can't prove" },
+      { id: "cant_stop",   label: "I know exactly what it is and can't stop doing it" },
+      { id: "dont_buy",    label: "I've been told, and I don't buy it" }
+    ]
+  },
+  {
+    id: "outcome", block: "history", type: "question",
+    q: "If this were handled six months from now, what would that look like?",
+    opts: [
+      { id: "easy",        label: "Meeting people without it being a whole production" },
+      { id: "enjoy",       label: "Actually enjoying dates instead of surviving them" },
+      { id: "one_person",  label: "One person worth keeping" },
+      { id: "know_how",    label: "Just knowing what to do instead of guessing" }
+    ]
+  },
+  {
+    id: "contact", block: "results", type: "contact",
+    lede: "Your breakdown is ready.",
+    body: ["Tell us where to send it. We'll show it on the next screen and email you a copy so you don't lose it."],
+    cta: "See my breakdown"
+  }
+];
+
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+
+var KEY = "quiz.answers.v1";
+var answers = {};
+try { answers = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { answers = {}; }
+
+var index = 0;
+var startId = location.pathname.split("/").filter(Boolean).pop();
+for (var i = 0; i < SCREENS.length; i++) {
+  if (SCREENS[i].id === startId) { index = i; break; }
+}
+
+var card = document.getElementById("card");
+var fill = document.getElementById("fill");
+var back = document.getElementById("back");
+
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(answers)); } catch (e) {}
+}
+
+// One shared id per event so the browser Pixel and your server-side CAPI call
+// are deduplicated instead of double-counted.
+function track(name, data) {
+  var eventId = name + "." + Date.now() + "." + Math.random().toString(36).slice(2, 10);
+  if (window.fbq) fbq("trackCustom", name, data || {}, { eventID: eventId });
+  return eventId;
+}
+
+function syncUrl(screen) {
+  var path = "/start/" + screen.block + "/" + screen.id;
+  if (location.pathname !== path) history.pushState({ i: index }, "", path);
+}
+
+// ---------------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------------
+
+function render() {
+  var s = SCREENS[index];
+  card.innerHTML = "";
+  fill.style.width = Math.round(8 + (index / SCREENS.length) * 92) + "%";
+  back.hidden = index === 0;
+  syncUrl(s);
+  track("QuizStep", { step: index + 1, screen: s.id });
+
+  if (s.type === "question")     return renderQuestion(s);
+  if (s.type === "interstitial") return renderInterstitial(s);
+  if (s.type === "contact")      return renderContact(s);
+}
+
+function el(tag, cls, text) {
+  var n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text) n.textContent = text;
+  return n;
+}
+
+function renderQuestion(s) {
+  card.appendChild(el("h1", "q", s.q));
+  if (s.helper) card.appendChild(el("p", "helper", s.helper));
+
+  var wrap = el("div", "opts");
+  s.opts.forEach(function (o) {
+    var b = el("button", "opt");
+    b.type = "button";
+    b.setAttribute("aria-pressed", answers[s.id] === o.id ? "true" : "false");
+    b.appendChild(el("span", null, o.label));
+    b.appendChild(el("span", "dot"));
+    b.addEventListener("click", function () {
+      answers[s.id] = o.id;
+      save();
+      wrap.querySelectorAll(".opt").forEach(function (x) {
+        x.setAttribute("aria-pressed", "false");
+      });
+      b.setAttribute("aria-pressed", "true");
+      // Brief pause so the selected state registers before advancing.
+      setTimeout(next, 220);
+    });
+    wrap.appendChild(b);
+  });
+  card.appendChild(wrap);
+  card.appendChild(el("div", "spacer"));
+}
+
+function renderInterstitial(s) {
+  card.appendChild(el("h1", "lede", s.lede));
+  s.body.forEach(function (p) { card.appendChild(el("p", "body", p)); });
+
+  if (s.quote) {
+    card.appendChild(el("p", "quote", s.quote));
+    card.appendChild(el("p", "cite", s.cite));
+  }
+  var btn = el("button", "cta", s.cta);
+  btn.type = "button";
+  btn.addEventListener("click", next);
+  card.appendChild(btn);
+}
+
+function renderContact(s) {
+  card.appendChild(el("h1", "lede", s.lede));
+  s.body.forEach(function (p) { card.appendChild(el("p", "body", p)); });
+
+  var name = field("First name", "text", "name", "Alex");
+  var mail = field("Email", "email", "email", "you@example.com");
+  card.appendChild(name.wrap);
+  card.appendChild(mail.wrap);
+
+  // Honeypot. Real people never fill this; bots usually do.
+  var trap = el("input", "trap");
+  trap.type = "text";
+  trap.name = "company";
+  trap.tabIndex = -1;
+  trap.setAttribute("autocomplete", "off");
+  card.appendChild(trap);
+
+  var err = el("p", "err", "");
+  err.hidden = true;
+  card.appendChild(err);
+
+  var btn = el("button", "cta", s.cta);
+  btn.type = "button";
+  btn.addEventListener("click", function () {
+    err.hidden = true;
+    if (!name.input.value.trim()) return fail("Add your first name.");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail.input.value.trim())) return fail("That email doesn't look right.");
+    if (trap.value) return;
+
+    answers.name = name.input.value.trim();
+    answers.email = mail.input.value.trim();
+    save();
+
+    btn.disabled = true;
+    btn.textContent = "One moment\u2026";
+    submit().then(go).catch(go);
+
+    function go() { location.href = CHECKOUT_URL; }
+  });
+  card.appendChild(btn);
+  card.appendChild(el("p", "fineprint", "We'll email your breakdown. Unsubscribe any time."));
+
+  function fail(msg) { err.textContent = msg; err.hidden = false; }
+}
+
+function field(label, type, id, placeholder) {
+  var wrap = el("div", "field");
+  var l = el("label", null, label);
+  l.setAttribute("for", id);
+  var input = document.createElement("input");
+  input.type = type;
+  input.id = id;
+  input.placeholder = placeholder;
+  input.autocomplete = type === "email" ? "email" : "given-name";
+  input.value = answers[id === "name" ? "name" : "email"] || "";
+  wrap.appendChild(l);
+  wrap.appendChild(input);
+  return { wrap: wrap, input: input };
+}
+
+function submit() {
+  track("Lead", { breakpoint: answers.breakpoint });
+  if (!LEAD_ENDPOINT) return Promise.resolve();
+  return fetch(LEAD_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(answers)
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Navigation
+// ---------------------------------------------------------------------------
+
+function next() {
+  if (index < SCREENS.length - 1) { index++; render(); }
+}
+
+back.addEventListener("click", function () {
+  if (index > 0) { index--; history.replaceState({ i: index }, "", "/start/" + SCREENS[index].block + "/" + SCREENS[index].id); render(); }
+});
+
+window.addEventListener("popstate", function (e) {
+  if (e.state && typeof e.state.i === "number") { index = e.state.i; render(); }
+});
+
+render();
+</script>
+</body>
+</html>
