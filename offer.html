@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Your plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;--ink:#14110F;--ink-soft:#6E6862;--line:#E7E4E0;
+  --chip:#F5F3F0;--btn:#14110F;--btn-ink:#FFFFFF;--accent:#E8730C;--wash:#FEF4EA;--ok:#2E7D4F;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:Poppins,system-ui,sans-serif;color:var(--ink);
+  -webkit-font-smoothing:antialiased;display:flex;justify-content:center;overflow-x:hidden}
+.shell{width:100%;max-width:440px;padding:18px 20px 40px}
+
+.top{display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:24px}
+.logo{font-size:16px;font-weight:600;letter-spacing:-.01em}
+
+h1{font-size:26px;font-weight:700;line-height:1.25;letter-spacing:-.015em}
+.subhead{margin-top:10px;font-size:17px;font-weight:500;line-height:1.42;color:var(--ink)}
+.lede{margin-top:22px;font-size:15.5px;line-height:1.62;color:var(--ink-soft)}
+
+/* VSL. Breaks out of the 440px column so it can run wider than the rest of the page.
+   Change --vsl-ratio to match your video: 16/9 landscape, 4/5 portrait, 9/16 vertical. */
+.vsl,.vsl-ph{
+  --vsl-ratio:16/9;
+  width:min(100vw, 900px);
+  margin-left:50%;
+  transform:translateX(-50%);
+  aspect-ratio:var(--vsl-ratio);
+  margin-top:24px;
+}
+.vsl{position:relative;overflow:hidden;background:#000}
+.vsl iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vsl-ph{background:var(--chip);border-top:1px dashed var(--line);
+  border-bottom:1px dashed var(--line);display:grid;place-items:center;text-align:center}
+.vsl-ph .play{width:78px;height:78px;border-radius:50%;background:#fff;margin:0 auto 14px;
+  display:grid;place-items:center;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.vsl-ph span{font-size:14px;color:var(--ink-soft)}
+.vsl-note{margin-top:14px;font-size:12.5px;color:var(--ink-soft);text-align:center}
+
+h2{font-size:20px;font-weight:700;line-height:1.3;margin-bottom:6px}
+.sub{font-size:14px;color:var(--ink-soft);line-height:1.55;margin-bottom:18px}
+.rule{height:1px;background:var(--line);margin:34px 0 28px}
+
+/* coaches */
+.coach{display:flex;gap:14px;align-items:flex-start;padding:16px;
+  border:1px solid var(--line);border-radius:16px}
+.coach + .coach{margin-top:12px}
+.coach .pic{width:56px;height:56px;border-radius:12px;background:var(--chip);flex:none;
+  object-fit:cover;display:grid;place-items:center;font-size:12px;color:var(--ink-soft)}
+.coach b{display:block;font-size:15.5px;font-weight:600}
+.coach .role{display:block;font-size:12.5px;color:var(--accent);font-weight:500;margin:2px 0 7px}
+.coach p{font-size:14px;line-height:1.58;color:var(--ink-soft)}
+
+/* bonuses */
+.bonus{display:flex;gap:13px;align-items:flex-start;padding:15px 0}
+.bonus + .bonus{border-top:1px solid var(--line)}
+/* Bonus thumbnail, 4:5 portrait. Swap .bshot-ph for <img class="bshot" src="..."> later. */
+.bshot{width:64px;aspect-ratio:4/5;flex:none;border-radius:10px;object-fit:cover;
+  background:var(--chip);display:block}
+.bshot-ph{width:64px;aspect-ratio:4/5;flex:none;border-radius:10px;background:var(--chip);
+  border:1px dashed var(--line);display:grid;place-items:center;
+  font-size:10.5px;color:var(--ink-soft);text-align:center;line-height:1.3}
+.bonus b{display:block;font-size:15px;font-weight:600;margin-bottom:3px}
+.bonus p{font-size:13.5px;line-height:1.55;color:var(--ink-soft)}
+.bonus .val{font-size:12.5px;color:var(--accent);font-weight:600;white-space:nowrap;margin-top:1px}
+.bhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+
+/* price */
+.price{margin-top:28px;border:1.5px solid var(--ink);border-radius:18px;padding:22px;text-align:center}
+.price .was{font-size:14px;color:var(--ink-soft);text-decoration:line-through}
+.price .now{font-size:40px;font-weight:700;line-height:1.05;margin:4px 0 2px;letter-spacing:-.02em}
+.price .once{font-size:13px;color:var(--ink-soft)}
+.price ul{list-style:none;margin:18px 0 0;text-align:left}
+.price li{display:flex;gap:9px;align-items:flex-start;font-size:14px;line-height:1.5;padding:6px 0}
+.price li svg{flex:none;margin-top:3px}
+
+.cta{display:block;width:100%;text-align:center;text-decoration:none;
+  font-family:inherit;font-size:15px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--btn-ink);background:var(--btn);border:0;border-radius:99px;padding:18px;
+  margin-top:22px;cursor:pointer;transition:opacity .15s}
+.cta:hover{opacity:.9}
+.under{margin-top:13px;font-size:12.5px;line-height:1.6;color:var(--ink-soft);text-align:center}
+
+/* ---------- highlights ---------- */
+.hl{display:flex;gap:13px;align-items:flex-start;padding:13px 0}
+.hl + .hl{border-top:1px solid var(--line)}
+.hl .ic{width:34px;height:34px;border-radius:10px;background:var(--wash);flex:none;
+  display:grid;place-items:center;line-height:0}
+.hl p{font-size:14.5px;line-height:1.58;color:var(--ink-soft)}
+.hl p b{color:var(--ink);font-weight:600}
+
+/* ---------- payment badges ---------- */
+.pays{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:16px}
+.pays span{border:1px solid var(--line);border-radius:6px;padding:5px 9px;
+  font-size:10.5px;font-weight:600;letter-spacing:.04em;color:var(--ink-soft)}
+
+/* ---------- guarantee ---------- */
+.guar{margin-top:28px;border:1px solid var(--line);border-radius:18px;padding:24px 20px;text-align:center}
+.guar .shield{width:56px;height:56px;border-radius:50%;background:var(--wash);margin:0 auto 14px;
+  display:grid;place-items:center}
+.guar b{display:block;font-size:19px;font-weight:700;line-height:1.3;margin-bottom:9px}
+.guar p{font-size:14px;line-height:1.6;color:var(--ink-soft)}
+
+/* ---------- faq ---------- */
+.faq{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.faq + .faq{margin-top:10px}
+.faq summary{list-style:none;cursor:pointer;padding:16px;display:flex;
+  justify-content:space-between;align-items:center;gap:12px;
+  font-size:14.5px;font-weight:600;line-height:1.4}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";flex:none;width:9px;height:9px;
+  border-right:1.8px solid var(--ink-soft);border-bottom:1.8px solid var(--ink-soft);
+  transform:rotate(45deg) translate(-2px,-2px);transition:transform .2s}
+.faq[open] summary::after{transform:rotate(-135deg) translate(-3px,-3px)}
+.faq .ans{padding:0 16px 16px;font-size:14px;line-height:1.62;color:var(--ink-soft)}
+
+/* ---------- closing block ---------- */
+.close{margin-top:36px;padding-top:30px;border-top:1px solid var(--line)}
+.close h2{text-align:center}
+.close .sub{text-align:center}
+
+/* ---------- footer ---------- */
+.foot{margin-top:38px;padding-top:22px;border-top:1px solid var(--line);
+  text-align:center;font-size:11.5px;line-height:1.75;color:var(--ink-soft)}
+.foot a{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<main class="shell">
+
+  <div class="top"><div class="logo">Dating Protocol</div></div>
+
+  <h1 id="headline">Your plan</h1>
+  <p class="subhead" id="subhead"></p>
+
+  <!-- ===== VSL — replace the placeholder div with your embed ===== -->
+  <div class="vsl-ph" id="vsl">
+    <div>
+      <div class="play">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6E6862" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l14 8-14 8z"/></svg>
+      </div>
+      <span>Video goes here</span>
+    </div>
+  </div>
+  <p class="vsl-note">Watch this first — about 6 minutes.</p>
+  <!-- ===== END VSL ===== -->
+
+  <p class="lede" id="lede"></p>
+
+  <div class="rule"></div>
+
+  <h2>Highlights of your plan</h2>
+  <p class="sub">What's actually in it.</p>
+
+  <!-- ===== HIGHLIGHTS — rewrite these to match the real product ===== -->
+  <div class="hl">
+    <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A8530A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg></div>
+    <p><b>A sequenced plan, not a content dump</b> — ordered around the sticking point
+    your answers pointed to, so you start where it actually matters.</p>
+  </div>
+
+  <div class="hl">
+    <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A8530A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg></div>
+    <p><b>What to actually say</b> — real openers, replies and recoveries, with the
+    reasoning behind them so you're not memorising lines.</p>
+  </div>
+
+  <div class="hl">
+    <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A8530A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg></div>
+    <p><b>Reading interest accurately</b> — telling genuine from polite, so you stop
+    guessing and stop wasting months on the wrong signals.</p>
+  </div>
+
+  <div class="hl">
+    <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A8530A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5a3 3 0 0 0-5.7-1.3A3 3 0 0 0 4 9.5a3.2 3.2 0 0 0 .6 4.4A3 3 0 0 0 8 19a3 3 0 0 0 4-1.3z"/><path d="M12 5.5a3 3 0 0 1 5.7-1.3A3 3 0 0 1 20 9.5a3.2 3.2 0 0 1-.6 4.4A3 3 0 0 1 16 19a3 3 0 0 1-4-1.3z"/></svg></div>
+    <p><b>The nerves part</b> — what to do with the overthinking, before and after,
+    rather than being told to just be confident.</p>
+  </div>
+
+  <div class="hl">
+    <div class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A8530A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.2"/><path d="M2.5 19a6.5 6.5 0 0 1 13 0"/><path d="M17 6.5a3 3 0 0 1 0 5.6M19 4a6 6 0 0 1 0 10.6"/></svg></div>
+    <p><b>Coaching, if you want it</b> — the material stands alone, and there's a route
+    to working with someone directly when you'd rather not go it alone.</p>
+  </div>
+  <!-- ===== END HIGHLIGHTS ===== -->
+
+  <div class="rule"></div>
+
+  <h2>Who you'll learn from</h2>
+  <p class="sub">Real people, not a faceless course.</p>
+
+  <!-- ===== COACHES — replace names, roles, photos, bios ===== -->
+  <div class="coach">
+    <div class="pic">photo</div>
+    <div>
+      <b>Farhan</b>
+      <span class="role">Lead coach</span>
+      <p>One or two sentences on who he is and why he's qualified. Specific beats
+      impressive — what he actually does and who he's helped.</p>
+    </div>
+  </div>
+
+  <div class="coach">
+    <div class="pic">photo</div>
+    <div>
+      <b>Coach two</b>
+      <span class="role">Their focus area</span>
+      <p>Short bio. If different coaches handle different sticking points, say which —
+      it makes the whole thing feel built rather than assembled.</p>
+    </div>
+  </div>
+
+  <div class="coach">
+    <div class="pic">photo</div>
+    <div>
+      <b>Coach three</b>
+      <span class="role">Their focus area</span>
+      <p>Short bio. Delete this block if there are only two coaches.</p>
+    </div>
+  </div>
+  <!-- ===== END COACHES ===== -->
+
+  <div class="rule"></div>
+
+  <h2>Everything you get</h2>
+  <p class="sub">Six bonuses included with the Protocol.</p>
+
+  <!-- ===== SIX BONUSES — replace names, descriptions, values ===== -->
+  <div class="bonus">
+    <div class="bshot-ph">Image<br>1</div>
+    <div>
+      <div class="bhead"><b>The Connection Guide</b><span class="val">$47</span></div>
+      <p>What it is in one sentence, and what it lets him do that he can't do now.</p>
+    </div>
+  </div>
+
+  <div class="bonus">
+    <div class="bshot-ph">Image<br>2</div>
+    <div>
+      <div class="bhead"><b>Bonus two</b><span class="val">$37</span></div>
+      <p>One line. Name the outcome, not the format — "40 openers that get replies"
+      beats "a PDF of openers".</p>
+    </div>
+  </div>
+
+  <div class="bonus">
+    <div class="bshot-ph">Image<br>3</div>
+    <div>
+      <div class="bhead"><b>Bonus three</b><span class="val">$29</span></div>
+      <p>One line describing it.</p>
+    </div>
+  </div>
+
+  <div class="bonus">
+    <div class="bshot-ph">Image<br>4</div>
+    <div>
+      <div class="bhead"><b>Bonus four</b><span class="val">$29</span></div>
+      <p>One line describing it.</p>
+    </div>
+  </div>
+
+  <div class="bonus">
+    <div class="bshot-ph">Image<br>5</div>
+    <div>
+      <div class="bhead"><b>Bonus five</b><span class="val">$25</span></div>
+      <p>One line describing it.</p>
+    </div>
+  </div>
+
+  <div class="bonus">
+    <div class="bshot-ph">Image<br>6</div>
+    <div>
+      <div class="bhead"><b>Bonus six</b><span class="val">$25</span></div>
+      <p>One line describing it.</p>
+    </div>
+  </div>
+  <!-- ===== END BONUSES ===== -->
+
+  <div class="price">
+    <div class="was">Total value $192</div>
+    <div class="now">$27</div>
+    <div class="once">One-time payment. No subscription.</div>
+    <ul>
+      <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D4F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>The Dating Protocol, in full</span></li>
+      <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D4F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>All six bonuses above</span></li>
+      <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D4F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span>Lifetime access, including updates</span></li>
+    </ul>
+  </div>
+
+  <a class="cta" id="buy" href="#">Get the protocol</a>
+
+  <div class="pays">
+    <span>VISA</span><span>MASTERCARD</span><span>AMEX</span>
+    <span>APPLE PAY</span><span>GOOGLE PAY</span>
+  </div>
+
+  <p class="under">Secure checkout via Stripe. Replace this line with your actual
+  refund terms — and only promise what you'll honour.</p>
+
+  <!-- ===== GUARANTEE — only claim what you'll actually honour ===== -->
+  <div class="guar">
+    <div class="shield">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A8530A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v6c0 4.4-3.1 7.9-7.5 9-4.4-1.1-7.5-4.6-7.5-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+    </div>
+    <b>30-day money-back guarantee</b>
+    <p>Work through it. If it isn't for you, email us within 30 days and we'll refund
+    you in full. No form to fill in and no questions to answer.</p>
+  </div>
+
+  <div class="rule"></div>
+
+  <h2>People often ask</h2>
+  <p class="sub">The ones that come up most.</p>
+
+  <!-- ===== FAQ — rewrite with the objections you actually hear ===== -->
+  <details class="faq">
+    <summary>Is this just going to be generic advice I've heard before?</summary>
+    <div class="ans">Rewrite this answer honestly. The strongest version names what
+    makes it different in concrete terms rather than insisting it's different.</div>
+  </details>
+
+  <details class="faq">
+    <summary>How long before I see anything change?</summary>
+    <div class="ans">Give a real range and say what it depends on. Promising results in
+    seven days sells better and refunds worse.</div>
+  </details>
+
+  <details class="faq">
+    <summary>What if I'm starting from nothing?</summary>
+    <div class="ans">Address the guy who picked "completely out of the game" — he's the
+    one most likely to think this isn't for him.</div>
+  </details>
+
+  <details class="faq">
+    <summary>What exactly do I get for $27?</summary>
+    <div class="ans">List it plainly. Format, length, how access works, and whether
+    there's anything else to pay later.</div>
+  </details>
+  <!-- ===== END FAQ ===== -->
+
+  <div class="close">
+    <h2 id="closeHead">Ready when you are</h2>
+    <p class="sub">One-time $27. Everything above included.</p>
+    <a class="cta" id="buy2" href="#">Get the protocol</a>
+    <p class="under">30-day money-back guarantee.</p>
+  </div>
+
+  <div class="foot">
+    Your Company Name Ltd, registered address here<br>
+    <a href="/terms">Terms &amp; Conditions</a> &middot;
+    <a href="/privacy">Privacy Policy</a> &middot;
+    <a href="mailto:hello@yourdomain.com">Contact us</a><br>
+    &copy; 2026 Your Company Name. All rights reserved.
+  </div>
+
+</main>
+
+<script>
+// ===== TEST MODE =====
+// true  = buy button skips payment and goes straight to /thanks, so you can
+//         walk the whole journey without Stripe connected.
+// false = uses CHECKOUT_URL below. Flip this when you're ready to take money.
+var TEST_MODE = true;
+
+// ===== PASTE YOUR STRIPE PAYMENT LINK HERE (used when TEST_MODE is false) =====
+var CHECKOUT_URL = "https://buy.stripe.com/your-link";
+
+var A = {};
+try { A = JSON.parse(localStorage.getItem("quiz.v2") || "{}"); } catch(e){}
+
+var HEAD = {
+  approach:   { h:"Your plan starts with getting seen",
+                s:"The Dating Protocol \u2014 built around the part you're actually stuck on.",
+                l:"Because the breakdown happens before anyone talks to you, the Protocol starts there \u2014 visibility and volume first, everything else after." },
+  messages:   { h:"Your plan starts with the conversation",
+                s:"The Dating Protocol \u2014 built around the part you're actually stuck on.",
+                l:"Because your sticking point is the gap between matching and meeting, the Protocol starts with pacing \u2014 how conversations move somewhere before interest expires." },
+  first_date: { h:"Your plan starts with the first date",
+                s:"The Dating Protocol \u2014 built around the part you're actually stuck on.",
+                l:"Because you already get to the first date, the Protocol starts where yours end \u2014 the difference between a date that goes fine and one that gets a sequel." },
+  fade:       { h:"Your plan starts with what happens after the novelty",
+                s:"The Dating Protocol \u2014 built around the part you're actually stuck on.",
+                l:"Because your pattern shows up around month three, the Protocol starts with the transition \u2014 what a relationship stands on once the new-ness runs out." }
+};
+
+var h = HEAD[A.breakpoint] || HEAD.messages;
+document.getElementById("headline").textContent = h.h;
+document.getElementById("subhead").textContent  = h.s;
+document.getElementById("lede").textContent     = h.l;
+
+var buy = document.getElementById("buy");
+var buy2 = document.getElementById("buy2");
+var dest;
+if (TEST_MODE){
+  dest = "/thanks";
+} else {
+  // Pass the email through so Stripe prefills it and you can match the order to the lead.
+  dest = CHECKOUT_URL + (A.email ? "?prefilled_email=" + encodeURIComponent(A.email) : "");
+}
+[buy, buy2].forEach(function(b){
+  if (!b) return;
+  b.href = dest;
+  b.addEventListener("click", function(){
+    if (window.fbq) fbq("track","InitiateCheckout",{ value:27, currency:"USD" });
+  });
+});
+
+// Closing headline echoes the sticking point.
+var CLOSE = {
+  approach:   "Start with getting seen",
+  messages:   "Start with the conversation",
+  first_date: "Start with the first date",
+  fade:       "Start with what comes after"
+};
+if (CLOSE[A.breakpoint]) document.getElementById("closeHead").textContent = CLOSE[A.breakpoint];
+
+if (window.fbq) fbq("trackCustom","ViewOffer",{ breakpoint:A.breakpoint });
+</script>
+</body>
+</html>

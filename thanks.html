@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>You're in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF;--ink:#14110F;--ink-soft:#6E6862;--line:#E7E4E0;
+  --chip:#F5F3F0;--btn:#14110F;--btn-ink:#FFFFFF;--accent:#E8730C;--wash:#FEF4EA;--ok:#2E7D4F;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:Poppins,system-ui,sans-serif;color:var(--ink);
+  -webkit-font-smoothing:antialiased;display:flex;justify-content:center}
+.shell{width:100%;max-width:440px;padding:18px 20px 44px}
+
+.top{display:flex;align-items:center;justify-content:center;min-height:36px;margin-bottom:34px}
+.logo{font-size:16px;font-weight:600;letter-spacing:-.01em}
+
+.seal{width:62px;height:62px;border-radius:50%;background:#EAF5EE;margin:0 auto 20px;
+  display:grid;place-items:center}
+h1{font-size:27px;font-weight:700;line-height:1.24;letter-spacing:-.015em;text-align:center}
+.lede{margin-top:13px;font-size:15.5px;line-height:1.62;color:var(--ink-soft);text-align:center}
+
+.rule{height:1px;background:var(--line);margin:32px 0 26px}
+h2{font-size:18px;font-weight:700;margin-bottom:16px}
+
+.step{display:flex;gap:13px;align-items:flex-start;padding:14px 0}
+.step + .step{border-top:1px solid var(--line)}
+.step .n{width:26px;height:26px;border-radius:50%;background:var(--wash);color:#A8530A;
+  flex:none;display:grid;place-items:center;font-size:12.5px;font-weight:600;margin-top:1px}
+.step b{display:block;font-size:15px;font-weight:600;margin-bottom:3px}
+.step p{font-size:13.5px;line-height:1.58;color:var(--ink-soft)}
+
+.box{margin-top:24px;background:var(--chip);border-radius:14px;padding:17px}
+.box b{display:block;font-size:14.5px;font-weight:600;margin-bottom:5px}
+.box p{font-size:13.5px;line-height:1.6;color:var(--ink-soft)}
+.box a{color:var(--ink)}
+
+.cta{display:block;width:100%;text-align:center;text-decoration:none;
+  font-family:inherit;font-size:15px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--btn-ink);background:var(--btn);border:0;border-radius:99px;padding:18px;
+  margin-top:28px;transition:opacity .15s}
+.cta:hover{opacity:.9}
+.under{margin-top:13px;font-size:12.5px;line-height:1.6;color:var(--ink-soft);text-align:center}
+</style>
+</head>
+<body>
+<main class="shell">
+
+  <div class="top"><div class="logo">Dating Protocol</div></div>
+
+  <div class="seal">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2E7D4F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+  </div>
+
+  <h1>You're in</h1>
+  <p class="lede" id="lede">Your payment went through and your access is on its way.</p>
+
+  <div class="rule"></div>
+
+  <h2>What happens next</h2>
+
+  <div class="step">
+    <div class="n">1</div>
+    <div>
+      <b>Check your email</b>
+      <p>Your login details and all six bonuses are in an email arriving in the next few
+      minutes. If it isn't there, look in spam and promotions before doing anything else.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">2</div>
+    <div>
+      <b>Start with module one</b>
+      <p id="step2">Given where you're stuck, start here rather than at the beginning.
+      It's the part that applies to you right now.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="n">3</div>
+    <div>
+      <b>Do the first exercise this week</b>
+      <p>The people who get results are the ones who do something in the first seven days.
+      Reading it all first and starting later almost never works.</p>
+    </div>
+  </div>
+
+  <div class="box">
+    <b>Didn't get the email?</b>
+    <p>Give it ten minutes, then check spam. Still nothing — reply to your Stripe receipt
+    or write to <a href="mailto:hello@yourdomain.com">hello@yourdomain.com</a> and we'll
+    sort it out.</p>
+  </div>
+
+  <!-- Upsell goes here later. Nothing to link to yet, so nothing is shown. -->
+
+</main>
+
+<script>
+var A = {};
+try { A = JSON.parse(localStorage.getItem("quiz.v2") || "{}"); } catch(e){}
+
+var START = {
+  approach:   "Start with the visibility module. Your sticking point is getting seen, so the conversation and dating material will make more sense once that's moving.",
+  messages:   "Start with the pacing module. Your sticking point is the gap between matching and meeting, and that's the fastest thing to change.",
+  first_date: "Skip ahead to the first-date module. You already get to the date reliably, so the earlier material isn't where your problem is.",
+  fade:       "Start with the transition module. Your pattern shows up after the novelty runs out, and that's what it's built for."
+};
+if (A.breakpoint && START[A.breakpoint]){
+  document.getElementById("step2").textContent = START[A.breakpoint];
+}
+
+// Purchase event. Stripe also sends its own webhook — use that as the source of
+// truth for revenue, since this page can be refreshed or skipped.
+if (window.fbq) fbq("track","Purchase",{ value:27, currency:"USD" });
+
+// The funnel is done; clear the stored answers so a return visit starts clean.
+try { localStorage.removeItem("quiz.v2"); } catch(e){}
+</script>
+</body>
+</html>
